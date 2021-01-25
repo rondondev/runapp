@@ -1,6 +1,6 @@
 -- name: CreateUser :one
-INSERT INTO users (type, name, email, password_hash, phone, birth, active)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+INSERT INTO users (type, name, email, phone, birth, active)
+VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING *;
 
 -- name: DeleteUser :exec
@@ -41,9 +41,8 @@ UPDATE users
 SET type          = $2,
     name          = $3,
     email         = $4,
-    password_hash = $5,
-    phone         = $6,
-    birth         = $7,
-    active        = $8
+    phone         = $5,
+    birth         = $6,
+    active        = $7
 WHERE id = $1
 RETURNING *;

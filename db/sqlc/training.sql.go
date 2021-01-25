@@ -102,7 +102,7 @@ func (q *Queries) ListTrainingsByUser(ctx context.Context, userID int64) ([]Trai
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Training
+	items := []Training{}
 	for rows.Next() {
 		var i Training
 		if err := rows.Scan(
@@ -151,7 +151,7 @@ func (q *Queries) ListTrainingsByUserInPeriod(ctx context.Context, arg ListTrain
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Training
+	items := []Training{}
 	for rows.Next() {
 		var i Training
 		if err := rows.Scan(

@@ -9,7 +9,7 @@ packages:
     emit_prepared_queries: false
     emit_interface: true
     emit_exact_table_names: false
-    emit_empty_slices: false
+    emit_empty_slices: true
     overrides:
       - column: "users.phone"
         go_type: "github.com/emvi/null.String"

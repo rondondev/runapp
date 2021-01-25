@@ -13,7 +13,6 @@ func (s *DbTestSuite) createUser(userType UserType, active bool) User {
 		Type: userType,
 		Name: s.f.Person().Name(),
 		Email: s.f.Internet().Email(),
-		PasswordHash: "hash",
 		Phone: null.NewString("12345678", true),
 		Birth: null.NewTime(time.Now().UTC(), true),
 		Active: active,
@@ -26,7 +25,6 @@ func (s *DbTestSuite) createUser(userType UserType, active bool) User {
 	s.Equal(arg.Type, user.Type)
 	s.Equal(arg.Name, user.Name)
 	s.Equal(arg.Email, user.Email)
-	s.Equal(arg.PasswordHash, user.PasswordHash)
 	s.Equal(arg.Phone, user.Phone)
 	s.Equal(arg.Birth.Time.Format("2006-01-02"), user.Birth.Time.Format("2006-01-02"))
 	s.Equal(arg.Active, user.Active)
@@ -62,7 +60,6 @@ func (s *DbTestSuite) TestGetUser() {
 	s.Equal(u.Type, user.Type)
 	s.Equal(u.Name, user.Name)
 	s.Equal(u.Email, user.Email)
-	s.Equal(u.PasswordHash, user.PasswordHash)
 	s.Equal(u.Phone, user.Phone)
 	s.Equal(u.Birth.Time, user.Birth.Time)
 	s.Equal(u.Active, user.Active)
@@ -173,7 +170,6 @@ func (s *DbTestSuite) TestUpdateUser() {
 		Type: u.Type,
 		Name: s.f.Person().Name(),
 		Email: s.f.Internet().Email(),
-		PasswordHash: u.PasswordHash,
 		Phone: u.Phone,
 		Birth: u.Birth,
 		Active: true,
@@ -187,7 +183,6 @@ func (s *DbTestSuite) TestUpdateUser() {
 	s.Equal(u.Type, user.Type)
 	s.Equal(arg.Name, user.Name)
 	s.Equal(arg.Email, user.Email)
-	s.Equal(u.PasswordHash, user.PasswordHash)
 	s.Equal(u.Phone, user.Phone)
 	s.Equal(u.Birth.Time, user.Birth.Time)
 	s.Equal(true, user.Active)

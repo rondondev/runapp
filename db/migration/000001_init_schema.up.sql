@@ -24,7 +24,6 @@ CREATE TABLE "users" (
   "type" user_type NOT NULL,
   "name" varchar NOT NULL,
   "email" varchar NOT NULL,
-  "password_hash" varchar NOT NULL,
   "phone" varchar,
   "birth" date,
   "active" boolean NOT NULL DEFAULT false,

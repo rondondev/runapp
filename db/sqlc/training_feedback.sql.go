@@ -66,7 +66,7 @@ func (q *Queries) ListTrainingFeedbacksByUser(ctx context.Context, userID int64)
 		return nil, err
 	}
 	defer rows.Close()
-	var items []TrainingFeedback
+	items := []TrainingFeedback{}
 	for rows.Next() {
 		var i TrainingFeedback
 		if err := rows.Scan(&i.ID, &i.TrainingID, &i.BorgScale); err != nil {
@@ -105,7 +105,7 @@ func (q *Queries) ListTrainingFeedbacksByUserInPeriod(ctx context.Context, arg L
 		return nil, err
 	}
 	defer rows.Close()
-	var items []TrainingFeedback
+	items := []TrainingFeedback{}
 	for rows.Next() {
 		var i TrainingFeedback
 		if err := rows.Scan(&i.ID, &i.TrainingID, &i.BorgScale); err != nil {

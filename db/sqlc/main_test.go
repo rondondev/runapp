@@ -11,7 +11,7 @@ import (
 
 const (
 	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:6432/runapp?sslmode=disable&timezone=UTC"
+	dbSource = "postgresql://root:secret@localhost:6432/runapp?sslmode=disable"
 )
 
 func TestDbTestSuite(t *testing.T) {

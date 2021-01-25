@@ -10,19 +10,18 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (type, name, email, password_hash, phone, birth, active)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, type, name, email, password_hash, phone, birth, active, created_at, deleted_at
+INSERT INTO users (type, name, email, phone, birth, active)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, type, name, email, phone, birth, active, created_at, deleted_at
 `
 
 type CreateUserParams struct {
-	Type         UserType    `json:"type"`
-	Name         string      `json:"name"`
-	Email        string      `json:"email"`
-	PasswordHash string      `json:"password_hash"`
-	Phone        null.String `json:"phone"`
-	Birth        null.Time   `json:"birth"`
-	Active       bool        `json:"active"`
+	Type   UserType    `json:"type"`
+	Name   string      `json:"name"`
+	Email  string      `json:"email"`
+	Phone  null.String `json:"phone"`
+	Birth  null.Time   `json:"birth"`
+	Active bool        `json:"active"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -30,7 +29,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Type,
 		arg.Name,
 		arg.Email,
-		arg.PasswordHash,
 		arg.Phone,
 		arg.Birth,
 		arg.Active,
@@ -41,7 +39,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Type,
 		&i.Name,
 		&i.Email,
-		&i.PasswordHash,
 		&i.Phone,
 		&i.Birth,
 		&i.Active,
@@ -63,7 +60,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, type, name, email, password_hash, phone, birth, active, created_at, deleted_at
+SELECT id, type, name, email, phone, birth, active, created_at, deleted_at
 FROM users
 WHERE id = $1
   AND deleted_at IS NULL
@@ -78,7 +75,6 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 		&i.Type,
 		&i.Name,
 		&i.Email,
-		&i.PasswordHash,
 		&i.Phone,
 		&i.Birth,
 		&i.Active,
@@ -89,7 +85,7 @@ func (q *Queries) GetUser(ctx context.Context, id int64) (User, error) {
 }
 
 const listActiveUsers = `-- name: ListActiveUsers :many
-SELECT id, type, name, email, password_hash, phone, birth, active, created_at, deleted_at
+SELECT id, type, name, email, phone, birth, active, created_at, deleted_at
 FROM users
 WHERE deleted_at IS NULL
   AND active = TRUE
@@ -108,7 +104,7 @@ func (q *Queries) ListActiveUsers(ctx context.Context, arg ListActiveUsersParams
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	items := []User{}
 	for rows.Next() {
 		var i User
 		if err := rows.Scan(
@@ -116,7 +112,6 @@ func (q *Queries) ListActiveUsers(ctx context.Context, arg ListActiveUsersParams
 			&i.Type,
 			&i.Name,
 			&i.Email,
-			&i.PasswordHash,
 			&i.Phone,
 			&i.Birth,
 			&i.Active,
@@ -137,7 +132,7 @@ func (q *Queries) ListActiveUsers(ctx context.Context, arg ListActiveUsersParams
 }
 
 const listAllUsers = `-- name: ListAllUsers :many
-SELECT id, type, name, email, password_hash, phone, birth, active, created_at, deleted_at
+SELECT id, type, name, email, phone, birth, active, created_at, deleted_at
 FROM users
 ORDER BY id
 LIMIT $1 OFFSET $2
@@ -154,7 +149,7 @@ func (q *Queries) ListAllUsers(ctx context.Context, arg ListAllUsersParams) ([]U
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	items := []User{}
 	for rows.Next() {
 		var i User
 		if err := rows.Scan(
@@ -162,7 +157,6 @@ func (q *Queries) ListAllUsers(ctx context.Context, arg ListAllUsersParams) ([]U
 			&i.Type,
 			&i.Name,
 			&i.Email,
-			&i.PasswordHash,
 			&i.Phone,
 			&i.Birth,
 			&i.Active,
@@ -183,7 +177,7 @@ func (q *Queries) ListAllUsers(ctx context.Context, arg ListAllUsersParams) ([]U
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, type, name, email, password_hash, phone, birth, active, created_at, deleted_at
+SELECT id, type, name, email, phone, birth, active, created_at, deleted_at
 FROM users
 WHERE deleted_at IS NULL
 ORDER BY id
@@ -201,7 +195,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 		return nil, err
 	}
 	defer rows.Close()
-	var items []User
+	items := []User{}
 	for rows.Next() {
 		var i User
 		if err := rows.Scan(
@@ -209,7 +203,6 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 			&i.Type,
 			&i.Name,
 			&i.Email,
-			&i.PasswordHash,
 			&i.Phone,
 			&i.Birth,
 			&i.Active,
@@ -234,23 +227,21 @@ UPDATE users
 SET type          = $2,
     name          = $3,
     email         = $4,
-    password_hash = $5,
-    phone         = $6,
-    birth         = $7,
-    active        = $8
+    phone         = $5,
+    birth         = $6,
+    active        = $7
 WHERE id = $1
-RETURNING id, type, name, email, password_hash, phone, birth, active, created_at, deleted_at
+RETURNING id, type, name, email, phone, birth, active, created_at, deleted_at
 `
 
 type UpdateUserParams struct {
-	ID           int64       `json:"id"`
-	Type         UserType    `json:"type"`
-	Name         string      `json:"name"`
-	Email        string      `json:"email"`
-	PasswordHash string      `json:"password_hash"`
-	Phone        null.String `json:"phone"`
-	Birth        null.Time   `json:"birth"`
-	Active       bool        `json:"active"`
+	ID     int64       `json:"id"`
+	Type   UserType    `json:"type"`
+	Name   string      `json:"name"`
+	Email  string      `json:"email"`
+	Phone  null.String `json:"phone"`
+	Birth  null.Time   `json:"birth"`
+	Active bool        `json:"active"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
@@ -259,7 +250,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		arg.Type,
 		arg.Name,
 		arg.Email,
-		arg.PasswordHash,
 		arg.Phone,
 		arg.Birth,
 		arg.Active,
@@ -270,7 +260,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		&i.Type,
 		&i.Name,
 		&i.Email,
-		&i.PasswordHash,
 		&i.Phone,
 		&i.Birth,
 		&i.Active,
