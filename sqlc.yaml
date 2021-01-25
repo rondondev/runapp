@@ -1,0 +1,25 @@
+version: "1"
+packages:
+  - name: "db"
+    path: "./db/sqlc"
+    queries: "./db/query/"
+    schema: "./db/migration/"
+    engine: "postgresql"
+    emit_json_tags: true
+    emit_prepared_queries: false
+    emit_interface: true
+    emit_exact_table_names: false
+    emit_empty_slices: false
+    overrides:
+      - column: "users.phone"
+        go_type: "github.com/emvi/null.String"
+      - column: "users.birth"
+        go_type: "github.com/emvi/null.Time"
+      - column: "users.deleted_at"
+        go_type: "github.com/emvi/null.Time"
+      - column: "training.type"
+        go_type: "github.com/emvi/null.String"
+      - column: "training.intensity"
+        go_type: "github.com/emvi/null.String"
+      - column: "training.deleted_at"
+        go_type: "github.com/emvi/null.Time"
