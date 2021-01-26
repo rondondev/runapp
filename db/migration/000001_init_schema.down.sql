@@ -4,3 +4,4 @@ DROP TABLE IF EXISTS users;
 DROP TYPE IF EXISTS training_status;
 DROP TYPE IF EXISTS training_sport;
 DROP TYPE IF EXISTS user_type;
+DROP TYPE IF EXISTS gender_type;

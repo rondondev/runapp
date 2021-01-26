@@ -1,6 +1,6 @@
 -- name: CreateUser :one
-INSERT INTO users (type, name, email, phone, birth, active)
-VALUES ($1, $2, $3, $4, $5, $6)
+INSERT INTO users (type, name, gender, email, phone, birth, active)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING *;
 
 -- name: DeleteUser :exec
@@ -38,11 +38,12 @@ LIMIT $1 OFFSET $2;
 
 -- name: UpdateUser :one
 UPDATE users
-SET type          = $2,
-    name          = $3,
-    email         = $4,
-    phone         = $5,
-    birth         = $6,
-    active        = $7
+SET type   = $2,
+    name   = $3,
+    gender = $4,
+    email  = $5,
+    phone  = $6,
+    birth  = $7,
+    active = $8
 WHERE id = $1
 RETURNING *;

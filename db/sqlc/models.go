@@ -9,6 +9,25 @@ import (
 	"github.com/emvi/null"
 )
 
+type GenderType string
+
+const (
+	GenderTypeM GenderType = "M"
+	GenderTypeF GenderType = "F"
+)
+
+func (e *GenderType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GenderType(s)
+	case string:
+		*e = GenderType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GenderType: %T", src)
+	}
+	return nil
+}
+
 type TrainingSport string
 
 const (
@@ -95,6 +114,7 @@ type User struct {
 	ID        int64       `json:"id"`
 	Type      UserType    `json:"type"`
 	Name      string      `json:"name"`
+	Gender    GenderType  `json:"gender"`
 	Email     string      `json:"email"`
 	Phone     null.String `json:"phone"`
 	Birth     null.Time   `json:"birth"`

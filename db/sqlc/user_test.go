@@ -12,6 +12,7 @@ func (s *DbTestSuite) createUser(userType UserType, active bool) User {
 	arg := CreateUserParams{
 		Type: userType,
 		Name: s.f.Person().Name(),
+		Gender: GenderTypeM,
 		Email: s.f.Internet().Email(),
 		Phone: null.NewString("12345678", true),
 		Birth: null.NewTime(time.Now().UTC(), true),
@@ -58,6 +59,7 @@ func (s *DbTestSuite) TestGetUser() {
 
 	s.Equal(u.ID, user.ID)
 	s.Equal(u.Type, user.Type)
+	s.Equal(u.Gender, user.Gender)
 	s.Equal(u.Name, user.Name)
 	s.Equal(u.Email, user.Email)
 	s.Equal(u.Phone, user.Phone)
@@ -169,6 +171,7 @@ func (s *DbTestSuite) TestUpdateUser() {
 		ID: u.ID,
 		Type: u.Type,
 		Name: s.f.Person().Name(),
+		Gender: GenderTypeF,
 		Email: s.f.Internet().Email(),
 		Phone: u.Phone,
 		Birth: u.Birth,

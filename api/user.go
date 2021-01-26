@@ -11,11 +11,12 @@ import (
 )
 
 type createUserRequest struct {
-	Type  db.UserType  `json:"type" binding:"required,oneof=admin coach athlete"`
-	Name  string  `json:"name" binding:"required"`
-	Email string  `json:"email" binding:"required"`
-	Phone *string `json:"phone"`
-	Birth *string `json:"birth" binding:"datetime=2006-01-02"`
+	Type   db.UserType   `json:"type" binding:"required,oneof=admin coach athlete"`
+	Name   string        `json:"name" binding:"required"`
+	Gender db.GenderType `json:"gender" binding:"required,oneof=M F"`
+	Email  string        `json:"email" binding:"required"`
+	Phone  *string       `json:"phone"`
+	Birth  *string       `json:"birth" binding:"datetime=2006-01-02"`
 }
 
 func (r *createUserRequest) toDB() (db.CreateUserParams, error) {
@@ -23,6 +24,7 @@ func (r *createUserRequest) toDB() (db.CreateUserParams, error) {
 		Type:  r.Type,
 		Name:  r.Name,
 		Email: r.Email,
+		Gender: r.Gender,
 	}
 	if r.Phone != nil {
 		arg.Phone.SetValid(*r.Phone)
@@ -149,7 +151,6 @@ func (server *Server) listAllUsers(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, users)
 }
 
-
 func (server *Server) deleteUser(ctx *gin.Context) {
 	var req idRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -192,8 +193,9 @@ type updateUserRequest struct {
 func (r *updateUserRequest) toDB(id int64) (db.UpdateUserParams, error) {
 	arg := db.UpdateUserParams{
 		ID:     id,
-		Type:   db.UserType(r.Type),
+		Type:   r.Type,
 		Name:   r.Name,
+		Gender: r.Gender,
 		Email:  r.Email,
 		Active: *r.Active,
 	}
