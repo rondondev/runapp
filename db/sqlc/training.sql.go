@@ -93,6 +93,7 @@ const listTrainingsByUser = `-- name: ListTrainingsByUser :many
 SELECT id, user_id, date, sport, type, intensity, details, status, created_at, deleted_at
 FROM training
 WHERE user_id = $1
+  AND deleted_at IS NULL
 ORDER BY id
 `
 

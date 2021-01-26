@@ -11,7 +11,7 @@ import (
 )
 
 type createUserRequest struct {
-	Type  string  `json:"type" binding:"required,oneof=admin coach athlete"`
+	Type  db.UserType  `json:"type" binding:"required,oneof=admin coach athlete"`
 	Name  string  `json:"name" binding:"required"`
 	Email string  `json:"email" binding:"required"`
 	Phone *string `json:"phone"`
@@ -20,7 +20,7 @@ type createUserRequest struct {
 
 func (r *createUserRequest) toDB() (db.CreateUserParams, error) {
 	arg := db.CreateUserParams{
-		Type:  db.UserType(r.Type),
+		Type:  r.Type,
 		Name:  r.Name,
 		Email: r.Email,
 	}
@@ -31,33 +31,6 @@ func (r *createUserRequest) toDB() (db.CreateUserParams, error) {
 		t, err := time.Parse("2006-01-02", *r.Birth)
 		if err != nil {
 			return db.CreateUserParams{}, err
-		}
-		arg.Birth.SetValid(t)
-	}
-
-	return arg, nil
-}
-
-type updateUserRequest struct {
-	createUserRequest
-	Active *bool `json:"active" binding:"required"`
-}
-
-func (r *updateUserRequest) toDB(id int64) (db.UpdateUserParams, error) {
-	arg := db.UpdateUserParams{
-		ID:     id,
-		Type:   db.UserType(r.Type),
-		Name:   r.Name,
-		Email:  r.Email,
-		Active: *r.Active,
-	}
-	if r.Phone != nil {
-		arg.Phone.SetValid(*r.Phone)
-	}
-	if r.Birth != nil {
-		t, err := time.Parse("2006-01-02", *r.Birth)
-		if err != nil {
-			return db.UpdateUserParams{}, err
 		}
 		arg.Birth.SetValid(t)
 	}
@@ -87,12 +60,8 @@ func (server *Server) createUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
-type getUserRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
-}
-
 func (server *Server) getUser(ctx *gin.Context) {
-	var req getUserRequest
+	var req idRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -114,7 +83,7 @@ func (server *Server) getUser(ctx *gin.Context) {
 
 type listUserRequest struct {
 	PageID   int32 `form:"page_id" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=10,max=1000"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=100"`
 }
 
 func (server *Server) listUsers(ctx *gin.Context) {
@@ -180,18 +149,15 @@ func (server *Server) listAllUsers(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, users)
 }
 
-type deleteUserRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
-}
 
 func (server *Server) deleteUser(ctx *gin.Context) {
-	var req deleteUserRequest
+	var req idRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	// Check if user exists
+	// Check if the user exists
 	user, err := server.store.GetUser(ctx, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -218,12 +184,35 @@ func (server *Server) deleteUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, nil)
 }
 
-type updateUserIDRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
+type updateUserRequest struct {
+	createUserRequest
+	Active *bool `json:"active" binding:"required"`
+}
+
+func (r *updateUserRequest) toDB(id int64) (db.UpdateUserParams, error) {
+	arg := db.UpdateUserParams{
+		ID:     id,
+		Type:   db.UserType(r.Type),
+		Name:   r.Name,
+		Email:  r.Email,
+		Active: *r.Active,
+	}
+	if r.Phone != nil {
+		arg.Phone.SetValid(*r.Phone)
+	}
+	if r.Birth != nil {
+		t, err := time.Parse("2006-01-02", *r.Birth)
+		if err != nil {
+			return db.UpdateUserParams{}, err
+		}
+		arg.Birth.SetValid(t)
+	}
+
+	return arg, nil
 }
 
 func (server *Server) updateUser(ctx *gin.Context) {
-	var u updateUserIDRequest
+	var u idRequest
 	if err := ctx.ShouldBindUri(&u); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return

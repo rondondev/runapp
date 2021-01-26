@@ -13,6 +13,10 @@ type Server struct {
 	router *gin.Engine
 }
 
+type idRequest struct {
+	ID int64 `uri:"id" binding:"required,min=1"`
+}
+
 // NewServer creates a new HTTP server and setup routing
 func NewServer(store db.Querier) *Server {
 	server := &Server{store: store}
@@ -27,6 +31,15 @@ func NewServer(store db.Querier) *Server {
 	router.PUT("/user/:id", server.updateUser)
 	router.DELETE("/user/:id", server.deleteUser)
 
+	// User trainings
+	router.GET("/trainings/user/:id", server.listTrainingsByUser)
+
+	// Training
+	router.GET("/training/:id", server.getTraining)
+	router.POST("/training", server.createTraining)
+	router.PUT("/training/:id", server.updateTraining)
+	router.DELETE("/training/:id", server.deleteTraining)
+
 
 	server.router = router
 
@@ -37,7 +50,6 @@ func NewServer(store db.Querier) *Server {
 func (server *Server) Start(address string) error {
 	return server.router.Run(address)
 }
-
 
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}

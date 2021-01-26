@@ -27,6 +27,7 @@ ORDER BY id;
 SELECT *
 FROM training
 WHERE user_id = $1
+  AND deleted_at IS NULL
 ORDER BY id;
 
 -- name: UpdateTraining :one
