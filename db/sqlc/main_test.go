@@ -11,7 +11,7 @@ import (
 
 const (
 	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:6432/runapp?sslmode=disable"
+	dbSource = "postgresql://root:secret@localhost:6433/runapp?sslmode=disable"
 )
 
 func TestDbTestSuite(t *testing.T) {
@@ -31,7 +31,7 @@ func (s *DbTestSuite) SetupSuite() {
 	}
 
 	// todo: run the tests in a fresh containerized DB
-	// clean DB
+	// clean up test DB
 	_, err = conn.Exec(`DELETE FROM training_feedback`)
 	s.Require().NoError(err)
 	_, err = conn.Exec(`DELETE FROM training`)
