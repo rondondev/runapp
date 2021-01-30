@@ -27,11 +27,10 @@ createtestdb:
 	@docker exec -it runapp-pg-test createdb --username=${POSTGRES_USER} --owner=${POSTGRES_USER} ${POSTGRES_DB}
 	@migrate -path db/migration -database ${MIGRATION_CONN_STRING_TEST} -verbose up
 
-
  sqlc:
 	sqlc generate
 
-test: createtestdb
+test:
 	go test -v -cover ./...
 
 run:

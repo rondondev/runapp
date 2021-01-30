@@ -10,7 +10,7 @@ jobs:
 
   test:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     env:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -31,7 +31,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 6432:5432
+          - 6433:5432
 
     steps:
       - name: Set up Go
