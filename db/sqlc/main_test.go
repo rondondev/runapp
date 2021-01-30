@@ -2,16 +2,14 @@ package db
 
 import (
 	"database/sql"
+	"log"
+	"testing"
+
+	"github.com/rondondev/runapp/util"
+
 	"github.com/jaswdr/faker"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/suite"
-	"log"
-	"testing"
-)
-
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:6433/runapp?sslmode=disable"
 )
 
 func TestDbTestSuite(t *testing.T) {
@@ -20,12 +18,17 @@ func TestDbTestSuite(t *testing.T) {
 
 type DbTestSuite struct {
 	suite.Suite
-	q	 *Queries
+	q *Queries
 	f faker.Faker
 }
 
 func (s *DbTestSuite) SetupSuite() {
-	conn, err := sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../..", "test")
+	if err != nil {
+		log.Fatal("cannot read config file:", err)
+	}
+
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}

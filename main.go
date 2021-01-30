@@ -1,32 +1,34 @@
 package main
 
 import (
-	"log"
 	"database/sql"
+	"fmt"
+	"log"
 
 	"github.com/rondondev/runapp/api"
 	db "github.com/rondondev/runapp/db/sqlc"
+	"github.com/rondondev/runapp/util"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:secret@localhost:6432/runapp?sslmode=disable"
-	serverAddress = "0.0.0.0:8080"
-)
-
 func main() {
-	conn, err := sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("./", "app")
 	if err != nil {
-		log.Fatal("cannot connect to db:", err)
+		log.Fatal("cannot load configs: ", err)
+	}
+
+	fmt.Println(config)
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
+	if err != nil {
+		log.Fatal("cannot connect to db: ", err)
 	}
 
 	store := db.New(conn)
 	server := api.NewServer(store)
 
-	err = server.Start(serverAddress)
+	err = server.Start(config.ServerAddress)
 	if err != nil {
-		log.Fatal("cannot start server:", err)
+		log.Fatal("cannot start server: ", err)
 	}
 }
