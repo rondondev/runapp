@@ -30,12 +30,12 @@ func (s *DbTestSuite) TestCreateTrainingFeedback() {
 func (s *DbTestSuite) TestDeleteTrainingFeedback() {
 	u := s.createUser(UserTypeAthlete, true)
 	t := s.createTraining(u.ID)
-	f := s.createTrainingFeedback(t.ID, 10)
+	s.createTrainingFeedback(t.ID, 10)
 
-	err := s.q.DeleteTrainingFeedback(context.Background(), f.ID)
+	err := s.q.DeleteTrainingFeedback(context.Background(), t.ID)
 	s.Require().NoError(err)
 
-	feedback, err := s.q.GetTrainingFeedback(context.Background(), f.ID)
+	feedback, err := s.q.GetTrainingFeedback(context.Background(), t.ID)
 	s.Require().Error(err)
 	s.Empty(feedback)
 }
@@ -45,7 +45,7 @@ func (s *DbTestSuite) TestGetTrainingFeedback() {
 	t := s.createTraining(u.ID)
 	f := s.createTrainingFeedback(t.ID, 10)
 
-	feedback, err := s.q.GetTrainingFeedback(context.Background(), f.ID)
+	feedback, err := s.q.GetTrainingFeedback(context.Background(), t.ID)
 	s.Require().NoError(err)
 	s.NotEmpty(feedback)
 
@@ -131,14 +131,14 @@ func (s *DbTestSuite) TestUpdateTrainingFeedback() {
 
 
 	arg := UpdateTrainingFeedbackParams{
-		ID: f.ID,
+		TrainingID: t.ID,
 		BorgScale: 15,
 	}
 
 	_, err := s.q.UpdateTrainingFeedback(context.Background(), arg)
 	s.Require().NoError(err)
 
-	feedback, err := s.q.GetTrainingFeedback(context.Background(), f.ID)
+	feedback, err := s.q.GetTrainingFeedback(context.Background(), t.ID)
 	s.Require().NoError(err)
 	s.NotEmpty(feedback)
 

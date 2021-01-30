@@ -6,12 +6,12 @@ RETURNING *;
 -- name: DeleteTrainingFeedback :exec
 DELETE
 FROM training_feedback
-WHERE id = $1;
+WHERE training_id = $1;
 
 -- name: GetTrainingFeedback :one
 SELECT *
 FROM training_feedback
-WHERE id = $1
+WHERE training_id = $1
 LIMIT 1;
 
 -- name: ListTrainingFeedbacksByUser :many
@@ -34,5 +34,5 @@ ORDER BY tf.id;
 -- name: UpdateTrainingFeedback :one
 UPDATE training_feedback
 SET borg_scale = $2
-WHERE id = $1
+WHERE training_id = $1
 RETURNING *;

@@ -32,6 +32,15 @@ func NewServer(store db.Querier) *Server {
 	router.DELETE("/user/:id", server.deleteUser)
 
 	// User trainings
+	router.GET("/trainings/feedback/user/:id", server.listTrainingFeedbacksByUser)
+
+	// Training
+	router.GET("/training/:id/feedback", server.getTrainingFeedback)
+	router.POST("/training/:id/feedback", server.createTrainingFeedback)
+	router.PUT("/training/:id/feedback", server.updateTrainingFeedback)
+	router.DELETE("/training/:id/feedback", server.deleteTrainingFeedback)
+
+	// Training feedbacks
 	router.GET("/trainings/user/:id", server.listTrainingsByUser)
 
 	// Training

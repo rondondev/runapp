@@ -29,23 +29,23 @@ func (q *Queries) CreateTrainingFeedback(ctx context.Context, arg CreateTraining
 const deleteTrainingFeedback = `-- name: DeleteTrainingFeedback :exec
 DELETE
 FROM training_feedback
-WHERE id = $1
+WHERE training_id = $1
 `
 
-func (q *Queries) DeleteTrainingFeedback(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteTrainingFeedback, id)
+func (q *Queries) DeleteTrainingFeedback(ctx context.Context, trainingID int64) error {
+	_, err := q.db.ExecContext(ctx, deleteTrainingFeedback, trainingID)
 	return err
 }
 
 const getTrainingFeedback = `-- name: GetTrainingFeedback :one
 SELECT id, training_id, borg_scale
 FROM training_feedback
-WHERE id = $1
+WHERE training_id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetTrainingFeedback(ctx context.Context, id int64) (TrainingFeedback, error) {
-	row := q.db.QueryRowContext(ctx, getTrainingFeedback, id)
+func (q *Queries) GetTrainingFeedback(ctx context.Context, trainingID int64) (TrainingFeedback, error) {
+	row := q.db.QueryRowContext(ctx, getTrainingFeedback, trainingID)
 	var i TrainingFeedback
 	err := row.Scan(&i.ID, &i.TrainingID, &i.BorgScale)
 	return i, err
@@ -125,17 +125,17 @@ func (q *Queries) ListTrainingFeedbacksByUserInPeriod(ctx context.Context, arg L
 const updateTrainingFeedback = `-- name: UpdateTrainingFeedback :one
 UPDATE training_feedback
 SET borg_scale = $2
-WHERE id = $1
+WHERE training_id = $1
 RETURNING id, training_id, borg_scale
 `
 
 type UpdateTrainingFeedbackParams struct {
-	ID        int64 `json:"id"`
-	BorgScale int32 `json:"borg_scale"`
+	TrainingID int64 `json:"training_id"`
+	BorgScale  int32 `json:"borg_scale"`
 }
 
 func (q *Queries) UpdateTrainingFeedback(ctx context.Context, arg UpdateTrainingFeedbackParams) (TrainingFeedback, error) {
-	row := q.db.QueryRowContext(ctx, updateTrainingFeedback, arg.ID, arg.BorgScale)
+	row := q.db.QueryRowContext(ctx, updateTrainingFeedback, arg.TrainingID, arg.BorgScale)
 	var i TrainingFeedback
 	err := row.Scan(&i.ID, &i.TrainingID, &i.BorgScale)
 	return i, err

@@ -11,10 +11,10 @@ type Querier interface {
 	CreateTrainingFeedback(ctx context.Context, arg CreateTrainingFeedbackParams) (TrainingFeedback, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteTraining(ctx context.Context, id int64) error
-	DeleteTrainingFeedback(ctx context.Context, id int64) error
+	DeleteTrainingFeedback(ctx context.Context, trainingID int64) error
 	DeleteUser(ctx context.Context, id int64) error
 	GetTraining(ctx context.Context, id int64) (Training, error)
-	GetTrainingFeedback(ctx context.Context, id int64) (TrainingFeedback, error)
+	GetTrainingFeedback(ctx context.Context, trainingID int64) (TrainingFeedback, error)
 	GetUser(ctx context.Context, id int64) (User, error)
 	ListActiveUsers(ctx context.Context, arg ListActiveUsersParams) ([]User, error)
 	ListAllUsers(ctx context.Context, arg ListAllUsersParams) ([]User, error)

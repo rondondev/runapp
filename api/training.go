@@ -127,7 +127,7 @@ func (server *Server) createTraining(ctx *gin.Context) {
 	_, err := server.store.GetUser(ctx, req.UserID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusBadRequest, errorResponse(errors.New("invalid user_id")))
+			ctx.JSON(http.StatusNotFound, errorResponse(errors.New("invalid user_id")))
 			return
 		}
 

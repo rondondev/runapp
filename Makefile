@@ -34,7 +34,7 @@ createtestdb:
 test: createtestdb
 	go test -v -cover ./...
 
-serve:
+run:
 	go run main.go
 
 .PHONY: postgres createdb dropdb migrateup migratedown sqlc test serve
